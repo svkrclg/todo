@@ -1,0 +1,303 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+    <title>TODO</title> 
+    <style type="text/css" media="screen"> 
+        body { 
+            text-decoration-color: white; 
+        } 
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4); 
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            font-size: large;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            text-align: center;
+        }
+
+        #delete_btn {
+            float: right;
+            margin-bottom: 20px;
+        }
+        #table {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+        }
+  
+        #table td, #customers th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        }
+        #table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #4CAF50;
+        color: white;
+        }
+
+        #table tr:hover {
+            background-color: #ffff99;
+
+        }
+        
+    </style> 
+</head> 
+<body> 
+      <center>
+        Welcome <%=name%>, to our home page. 
+      </center>
+      <input type="submit" onclick="show_form()" value="Create" />
+      <a href = "/logout">Logout</a>
+      <h3>To do</h3>
+      <table id="table" class = "todo">
+          <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Priority</th>
+              <th>Category</th>
+              <th>Assignee</th>
+              <th>Attachment</th>
+              <th>Created at</th>
+              <th>Updated at</th>
+            </tr>
+          <% tasks.forEach(function(ele, index){ %>
+            <% if(ele.status == 1 ) { %>
+            <tr id="task"> 
+              <td name = "id"><%= ele.id %></td>
+              <td name = "title"> <%= ele.title %></td>
+              <td name = "description"> <%= ele.description %></td>
+              <td name = "priority"><%= ele.priority %></td>
+              <td name = "category"> <%= ele.category %></td>
+              <td name = "assignee"> <%= ele.assignee %></td>
+              <td name = "attachment"> <a href= "/file/<%= ele.attachment %>">Download</td>
+              <td> <%= ele.created_at %></td>
+              <td> <%= ele.updated_at %></td>
+            </tr>
+            <% } %>
+          <% }) %> 
+      </table>
+      <h3>Doing</h3>
+      <table id="table" class = "doing">
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Priority</th>
+            <th>Category</th>
+            <th>Assignee</th>
+            <th>Attachment</th>
+            <th>Created at</th>
+            <th>Updated at</th>
+          </tr>
+        <% tasks.forEach(function(ele, index){ %>
+          <% if(ele.status == 2 ) { %>
+          <tr id = "task">
+              <td name = "id"><%= ele.id %></td>
+              <td name = "title"> <%= ele.title %></td>
+              <td name = "description"> <%= ele.description %></td>
+              <td name = "priority"><%= ele.priority %></td>
+              <td name = "category"> <%= ele.category %></td>
+              <td name = "assignee"> <%= ele.assignee %></td>
+              <td name = "attachment"> <a href= "/file/<%= ele.attachment %>">Download</td>
+              <td> <%= ele.created_at %></td>
+              <td> <%= ele.updated_at %></td>
+          </tr>
+          <% } %>
+        <% }) %> 
+    </table>
+
+    <h3>Done</h3>
+    <table id="table" class = "done">
+          <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Priority</th>
+              <th>Category</th>
+              <th>Assignee</th>
+              <th>Attachment</th>
+              <th>Created at</th>
+              <th>Updated at</th>
+            </tr>
+          <% tasks.forEach(function(ele, index){ %>
+            <% if(ele.status == 3 ) { %>
+            <tr id = "task">
+              <td name = "id"><%= ele.id %></td>
+              <td name = "title"> <%= ele.title %></td>
+              <td name = "description"> <%= ele.description %></td>
+              <td name = "priority"><%= ele.priority %></td>
+              <td name = "category"> <%= ele.category %></td>
+              <td name = "assignee"> <%= ele.assignee %></td>
+              <td name = "attachment"> <a href= "/file/<%= ele.attachment %>">Download</td>
+              <td> <%= ele.created_at %></td>
+              <td> <%= ele.updated_at %></td>
+            </tr>
+            <% } %>
+          <% }) %> 
+    </table>
+    <!-- The Modal -->
+    <div id="new_task_modal" class="modal">
+        <div class="modal-content">
+            <h2>Create New Task</h2>
+            <form id = "new_form" enctype="multipart/form-data">
+				<input type="text" name="title" placeholder="Title" required> <br>
+                <input type="text" name="description" placeholder="Description" required> <br>
+                <input type="text" name="priority" placeholder="Priority" required> <br>
+                <input type="text" name="category" placeholder="Category" required> <br>
+                <input type="text" name="assignee" placeholder="Assigned to" required> <br>
+                <input type="file" name="attachment"> <br>
+				<input type="submit">
+			</form>
+        </div>
+  
+    </div>
+    
+    <div id="edit_task_modal" class="modal">
+        <div class="modal-content">
+            <h2>Edit Task</h2>
+            <form  id =  "edit_form" enctype="multipart/form-data">
+                <input type="hidden" name="id">
+				<input type="text" name="title" placeholder="Title" required> <br>
+                <input type="text" name="description" placeholder="Description" required> <br>
+                <input type="text" name="priority" placeholder="Priority" required> <br>
+                <input type="text" name="category" placeholder="Category" required> <br>
+                <input type="text" name="assignee" placeholder="Assigned to" required> <br>
+                <label>Move:</label>
+                <select name="status" id="move">
+                    <option value="1">To do</option>
+                    <option value="2">Doing</option>
+                    <option value="3">Done</option>
+                </select><br>
+                <input type="file" name="attachment"> <br>
+				<input type="submit">
+            </form>
+            
+            <button id="delete_btn" >Delete</button>
+        </div>
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script>
+        var new_modal = document.getElementById("new_task_modal");
+        var edit_modal = document.getElementById("edit_task_modal");
+        function show_form() {
+            new_modal.style.display = "block";
+        }
+        window.onclick = function(event) {
+            if (event.target == new_modal) {
+                new_modal.style.display = "none";
+            }
+            if( event.target == edit_modal) {
+                edit_modal.style.display = "none"
+            }
+        }
+        $(document).ready(function(){
+            $("#new_form").on("submit", function(event){
+                event.preventDefault();
+                var formValues= new FormData(this)
+        
+                $.ajax({
+                    url: '/create_task',
+                    type: 'POST',
+                    data: formValues,
+                    success: function (data) {
+                        if(data == "1")
+                          location.reload();
+                        else
+                          alert("Error, try again")
+                    },
+                    contentType: false,
+                    processData: false
+                });
+            });
+
+            $("#edit_form").on("submit", function(event){
+                event.preventDefault();
+                var formValues= new FormData(this)
+                if ($('#edit_form').find('[name=attachment]').val()=='')
+                    formValues.delete("attachment")
+                formValues.f
+                $.ajax({
+                    url: '/edit_task',
+                    type: 'POST',
+                    data: formValues,
+                    success: function (data) {
+                        if(data == "1")
+                          location.reload();
+                        else
+                          alert("Error, try again")
+                    },
+                    contentType: false,
+                    processData: false
+                });
+            });
+
+            $('#delete_btn').on("click", function(event) {
+                event.preventDefault();
+                var id = $(this).attr('value');
+                $.ajax({
+                    url: '/delete_task/'+id,
+                    type: 'DELETE',
+                    success: function (data) {
+                        if(data == "1")
+                          location.reload();
+                        else
+                          alert("Error, try again")
+                    },
+                    contentType: false,
+                    processData: false
+                });
+            })
+            $('#table #task').on("click", function(event){
+                var table_class = $(this).parent().parent().attr('class')
+                console.log(table_class)
+                var set
+                if(table_class=='todo')
+                    set = 1
+                else if(table_class=='doing')
+                    set = 2
+                else
+                    set = 3
+                console.log(set)
+                id = $(this).find("[name=id]").text()
+                console.log(id)
+                title = $(this).find("[name=title]").text()
+                description = $(this).find("[name=description]").text()
+                priority = $(this).find("[name=priority]").text()
+                category = $(this).find("[name=category]").text()
+                assignee = $(this).find("[name=assignee]").text()
+                $('#edit_form').find("[name=id]").val(id)
+                $("#edit_form").find("[name=title]").val(title)
+                $("#edit_form").find("[name=description]").val(description)
+                $("#edit_form").find("[name=priority]").val(priority)
+                $("#edit_form").find("[name=category]").val(category)
+                $("#edit_form").find("[name=assignee]").val(assignee)
+                $("#edit_form").find("[id=move]").find("option").removeAttr('selected').filter('[value='+set+']').attr('selected', true)
+                $("#delete_btn").val(id)
+                edit_modal.style.display = "block"
+            })
+        });
+
+        
+        
+    </script>
+</body> 
+</html>  
